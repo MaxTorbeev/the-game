@@ -9,7 +9,7 @@ dotenv.config();
 
 const port = process.env.SERVER_PORT;
 
-// Configure Express to use EJS
+// Configure Express to use EJS some comment
 app.set( "views", path.join( __dirname, "views" ) );
 app.set( "view engine", "ejs" );
 
