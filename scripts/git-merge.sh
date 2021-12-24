@@ -17,5 +17,6 @@ set -e
 currentBranch=$( git symbolic-ref --short HEAD )
 currentHead=$( git rev-parse --short HEAD )
 
-git checkout release && git pull origin release && git checkout dev && git pull release
+git checkout release && git pull origin release
+git checkout dev && git pull origin release
 
