@@ -19,6 +19,3 @@ currentHead=$( git rev-parse --short HEAD )
 
 git checkout release && git pull origin/release
 git checkout $currentBranch && git pull release
-
-echo $currentHead;
-
