@@ -19,8 +19,8 @@ currentHead=$( git rev-parse --short HEAD )
 
 echo "Current branch $currentBranch with hash: $currentHead"
 
-git checkout release && git pull origin release -q
-git checkout "$currentBranch" && git pull origin release -q
+git checkout release -q && git pull origin release -q
+git checkout "$currentBranch" -q && git pull origin release -q
 
 hasConflict=$( git diff --name-only --diff-filter=U )
 
