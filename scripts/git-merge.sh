@@ -28,3 +28,5 @@ if [ "$hasConflict" ]; then
   echo "Conflict: $hasConflict"
   git reset --hard origin/"$currentBranch"
 fi
+
+echo "Release has been merged to $currentBranch"
