@@ -15,6 +15,9 @@ set -e
 #для теста можно использовать репозиторий ibg, у них стоит 48 релиз, задач было залито много последующих релизов, можно попытаться слить с 60 релизом (должны быть различия) и с 63 релизом (различий быть не должно)
 
 currentBranch=$( git symbolic-ref --short HEAD )
+
+echo "Current branch $currentBranch"
+
 #currentHead=$( git rev-parse --short HEAD )
 
 git checkout release && git pull origin release
