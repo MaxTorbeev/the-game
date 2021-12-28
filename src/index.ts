@@ -19,9 +19,11 @@ app.get( "/", ( req, res ) => {
     res.render( "index" );
 } );
 
+
+
 // define a route handler for the default home page
 app.get( "/about", ( req, res ) => {
-        res.render( "about" ); // render the index template
+    res.render( "about" ); // render the index template
 } );
 
 
