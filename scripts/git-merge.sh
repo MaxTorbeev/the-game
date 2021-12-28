@@ -15,10 +15,9 @@ set -e
 #для теста можно использовать репозиторий ibg, у них стоит 48 релиз, задач было залито много последующих релизов, можно попытаться слить с 60 релизом (должны быть различия) и с 63 релизом (различий быть не должно)
 
 currentBranch=$( git symbolic-ref --short HEAD )
+currentHead=$( git rev-parse --short HEAD )
 
-echo "Current branch $currentBranch"
-
-#currentHead=$( git rev-parse --short HEAD )
+echo "Current branch $currentBranch with hash: $currentHead"
 
 git checkout release && git pull origin release -q
 git checkout "$currentBranch" && git pull origin release -q
@@ -26,5 +25,6 @@ git checkout "$currentBranch" && git pull origin release -q
 hasConflict=$( git diff --name-only --diff-filter=U )
 
 if [ "$hasConflict" ]; then
+  echo "Conflict: $hasConflict"
   git reset --hard origin/"$currentBranch"
 fi
