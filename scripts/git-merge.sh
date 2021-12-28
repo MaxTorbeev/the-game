@@ -7,7 +7,7 @@ set -e
 rootpath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; cd "../" >/dev/null 2>&1 ; pwd -P )"
 
 # log file
-logfile="${rootpath}/scripts/.git-pull.log"
+logfile="${rootpath}/scripts/.git-merge.log"
 
 #- взять ветку из параметра (или release), проверить что она актуальна (запулить ремоут и сравнить)
 #- смерджить ветки (либо через чекаут на отдельную ветку, либо прям тут)
