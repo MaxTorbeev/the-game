@@ -3,6 +3,12 @@
 # set exit on any error
 set -e
 
+# path to root repository folder
+rootpath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; cd "../" >/dev/null 2>&1 ; pwd -P )"
+
+# log file
+logfile="${rootpath}/scripts/.git-pull.log"
+
 #- взять ветку из параметра (или release), проверить что она актуальна (запулить ремоут и сравнить)
 #- смерджить ветки (либо через чекаут на отдельную ветку, либо прям тут)
 #- в случае конфликта откатить до первоначального состояния
@@ -19,8 +25,8 @@ currentHead=$( git rev-parse --short HEAD )
 
 echo "Current branch $currentBranch with hash $currentHead"
 
-releaseUpdatedStatus=$(git checkout release -q >/dev/null 2>&1 && git pull origin release -q >/dev/null 2>&1)
-mergeStatus=$(git checkout "$currentBranch" -q >/dev/null 2>&1 && git pull origin release -q >/dev/null 2>&1)
+git checkout release -q >> $logfile && git pull origin release -q >> $logfile
+git checkout "$currentBranch" -q >> $logfile && git pull origin release -q >> $logfile
 
 hasConflict=$( git diff --name-only --diff-filter=U )
 
