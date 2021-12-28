@@ -17,16 +17,16 @@ set -e
 currentBranch=$( git symbolic-ref --short HEAD )
 currentHead=$( git rev-parse --short HEAD )
 
-echo "Current branch $currentBranch with hash: $currentHead"
+echo "Current branch $currentBranch with hash $currentHead"
 
-git checkout release -q && git pull origin release -q
-git checkout "$currentBranch" -q && git pull origin release -q
+releaseUpdatedStatus=$(git checkout release -q >/dev/null 2>&1 && git pull origin release -q >/dev/null 2>&1)
+mergeStatus=$(git checkout "$currentBranch" -q >/dev/null 2>&1 && git pull origin release -q >/dev/null 2>&1)
 
-hasConflict=$( git diff --name-only --diff-filter=U )
-
-if [ "$hasConflict" ]; then
-  echo "Conflict: $hasConflict"
-  git reset --hard origin/"$currentBranch"
-fi
-
-echo "Release has been merged to $currentBranch"
+#hasConflict=$( git diff --name-only --diff-filter=U )
+#
+#if [ "$hasConflict" ]; then
+#  echo "Conflict: $hasConflict"
+#  git reset --hard origin/"$currentBranch"
+#fi
+#
+#echo "Release has been merged to $currentBranch"
