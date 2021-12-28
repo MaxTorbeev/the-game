@@ -4,3 +4,4 @@
 .idea/
 /scripts/.diff.log
 /scripts/.git-pull.log
+/scripts/.git-merge.log

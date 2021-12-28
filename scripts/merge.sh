@@ -10,6 +10,6 @@ rootpath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; cd "../" >/dev/null 2>&1 ; p
 # Принимает параметр - с какой веткой мерджить, если не задан, то берем ветку release.
 
 #echo $rootpath
-#cd "$rootpath" && /bin/bash ./scripts/git-pull.sh
+cd "$rootpath" && /bin/bash ./scripts/git-pull.sh
 cd "$rootpath" && /bin/bash ./scripts/git-merge.sh
 
