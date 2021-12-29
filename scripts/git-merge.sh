@@ -38,6 +38,3 @@ else
   git checkout "$currentBranch" -q >> $logfile && git merge origin/release -q >> $logfile
   echo "Release has been merged to $currentBranch"
 fi
-
-
-
