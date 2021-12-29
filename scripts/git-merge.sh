@@ -30,13 +30,13 @@ git checkout release -q >> $logfile && git pull origin release -q >> $logfile
 
 difference="$(git --no-pager diff -C -b -w --name-status --word-diff=none origin/release)"
 
+echo "$difference";
+echo "======="
+
 git checkout "$currentBranch" -q >> $logfile && git pull origin release -q >> $logfile
 
 if [ -n "$difference" ]; then
-
-  echo "$difference";
-  echo "======="
-
+  echo "Conflict: $( git diff --name-only --diff-filter=U )"
   git reset --hard
 else
   echo "Release has been merged to $currentBranch"
