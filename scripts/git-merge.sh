@@ -33,6 +33,6 @@ hasConflict=$( git diff --name-only --diff-filter=U )
 if [ "$hasConflict" ]; then
   echo "Conflict: $hasConflict"
   git reset --hard origin/"$currentBranch"
+else
+  echo "Release has been merged to $currentBranch"
 fi
-
-echo "Release has been merged to $currentBranch"
