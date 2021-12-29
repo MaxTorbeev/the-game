@@ -27,7 +27,7 @@ echo "Current branch $currentBranch with hash $currentHead"
 echo "======="
 git checkout release -q >> $logfile && git pull origin release -q >> $logfile
 
-difference=$( git diff --cached -b -w --diff-algorithm=patience --compact-summary origin/release)
+difference=$( git diff --cached origin/release)
 
 echo "$difference";
 echo "======="
