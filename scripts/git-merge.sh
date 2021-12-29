@@ -26,11 +26,11 @@ currentHead=$( git rev-parse --short HEAD )
 echo "Current branch $currentBranch with hash $currentHead"
 echo "======="
 
-git checkout release -q >> $logfile && git pull origin release -q > /dev/null 2>&1
+git checkout release -q >> $logfile && git pull origin release -q >> $logfile
 
 difference="$(git --no-pager diff -C -b -w --name-status --word-diff=none origin/release)"
 
-git checkout "$currentBranch" -q >> $logfile && git pull origin release -q >> $logfile
+git checkout "$currentBranch" -q >> $logfile && git pull origin release -q > /dev/null 2>&1
 
 if [ -n "$difference" ]; then
   echo "$difference";
