@@ -25,20 +25,22 @@ currentHead=$( git rev-parse --short HEAD )
 
 echo "Current branch $currentBranch with hash $currentHead"
 echo "======="
+
 git checkout release -q >> $logfile && git pull origin release -q >> $logfile
 
-difference="$(git diff -C -b -w --name-status --word-diff=none  origin/release)"
+difference="$(git --no-pager diff -C -b -w --name-status --word-diff=none origin/release)"
 
 echo "$difference";
 echo "======="
 
-#if [ "$difference" ]; then
-#  echo "Conflict: $( git diff --name-only --diff-filter=U )"
-#  git reset --hard origin/"$currentBranch"
-#else
-#  git checkout "$currentBranch" -q >> $logfile && git pull origin release -q >> $logfile
-#  echo "Release has been merged to $currentBranch"
-#fi
+git checkout "$currentBranch" -q >> $logfile && git pull origin release -q >> $logfile
+
+if [ -n "$difference" ]; then
+  echo "Conflict: $( git diff --name-only --diff-filter=U )"
+  git reset --hard origin/"$currentBranch"
+else
+  echo "Release has been merged to $currentBranch"
+fi
 
 
 
