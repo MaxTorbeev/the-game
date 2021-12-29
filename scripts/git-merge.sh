@@ -28,7 +28,7 @@ echo "======="
 
 git checkout release -q >> $logfile && git pull origin release -q >> $logfile
 
-difference="$(git merge-tree "$(git merge-base $currentBranch release)" release $currentBranch)"
+difference="$(git merge-tree "$(git merge-base $currentBranch release)" release $currentBranch | sed -ne '/^\+<<</,/^\+>>>/ p')"
 
 echo $difference
 
