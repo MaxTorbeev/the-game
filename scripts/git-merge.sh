@@ -37,7 +37,7 @@ git checkout "$currentBranch" -q >> $logfile && git pull origin release -q >> $l
 
 if [ -n "$difference" ]; then
   echo "Conflict: $( git diff --name-only --diff-filter=U )"
-  git reset --hard
+  git reset --hard origin/"$currentBranch"
 else
   echo "Release has been merged to $currentBranch"
 fi
