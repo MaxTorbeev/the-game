@@ -28,9 +28,9 @@ echo "======="
 
 git checkout release -q >> $logfile && git pull origin release -q >> $logfile
 
-difference="$(git --no-pager diff -C -b -w --name-status --word-diff=none origin/release)"
+difference="$(git merge-tree "$(git merge-base $currentBranch release)" release $currentBranch)"
 
-echo "$(git merge-tree "$(git merge-base $currentBranch release)" release $currentBranch)"
+echo $difference
 
 #if [ -n "$difference" ]; then
 #  echo "$difference";
