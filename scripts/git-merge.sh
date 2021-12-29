@@ -33,7 +33,8 @@ difference="$(git merge-tree "$(git merge-base $currentBranch release)" release 
 if [ -n "$difference" ]; then
   echo "$difference";
   echo "======="
-  git reset --hard
+  git checkout "$currentBranch"
+#  git reset --hard
 else
   git checkout "$currentBranch" -q >> $logfile && git merge origin/release -q >> $logfile
   echo "Release has been merged to $currentBranch"
