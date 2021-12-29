@@ -34,7 +34,6 @@ if [ -n "$difference" ]; then
   echo "$difference";
   echo "======="
   git checkout "$currentBranch"
-#  git reset --hard
 else
   git checkout "$currentBranch" -q >> $logfile && git merge origin/release -q >> $logfile
   echo "Release has been merged to $currentBranch"
