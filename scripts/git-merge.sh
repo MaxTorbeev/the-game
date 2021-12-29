@@ -32,6 +32,8 @@ difference="$(git merge-tree "$(git merge-base $currentBranch release)" release 
 
 echo $difference
 
+git checkout "$currentBranch"
+
 #if [ -n "$difference" ]; then
 #  echo "$difference";
 #  echo "======="
