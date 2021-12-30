@@ -16,7 +16,8 @@ try
   echo "Current branch $currentBranch with hash $currentHead" >> "$logfile"
   echo "=======" >> "$logfile"
 
-  git checkout "$branch" -q >> $logfile && git pull "$repo" "$branch" -q >> $logfile
+  git checkout "$branch" -q >> $logfile
+  git pull "$repo" "$branch" -q >> $logfile
 
   isConflict="$(git merge-tree "$(git merge-base $currentBranch "$branch")" "$branch" $currentBranch | sed -ne '/^\+<<</,/^\+>>>/ p')"
 
