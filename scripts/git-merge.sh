@@ -13,16 +13,16 @@ try
   currentBranch=$( git symbolic-ref --short HEAD )
   currentHead=$( git rev-parse --short HEAD )
 
-  echo "Current branch $currentBranch with hash $currentHead"
-  echo "======="
+  echo "Current branch $currentBranch with hash $currentHead" >> "$logfile"
+  echo "=======" >> "$logfile"
 
   git checkout "$branch" -q >> $logfile && git pull "$repo" "$branch" -q >> $logfile
 
   isConflict="$(git merge-tree "$(git merge-base $currentBranch "$branch")" "$branch" $currentBranch | sed -ne '/^\+<<</,/^\+>>>/ p')"
 
   if [ -n "$isConflict" ]; then
-    echo "Conflict: ";
-    echo "$isConflict";
+    echo "Conflict: " >> "$logfile";
+    echo "$isConflict" >> "$logfile";
     echo "======="
     git checkout "$currentBranch"
     exit 1;
