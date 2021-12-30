@@ -10,7 +10,6 @@ logfile="${rootpath}/scripts/.git-merge.log"
 
 try
 (
-echo "$branch $repo"
   currentBranch=$( git symbolic-ref --short HEAD )
   currentHead=$( git rev-parse --short HEAD )
 
