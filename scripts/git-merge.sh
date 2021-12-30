@@ -21,8 +21,8 @@ try
   isConflict="$(git merge-tree "$(git merge-base $currentBranch "$branch")" "$branch" $currentBranch | sed -ne '/^\+<<</,/^\+>>>/ p')"
 
   if [ -n "$isConflict" ]; then
-    echo "Conflict: " >> "$logfile";
-    echo "$isConflict" >> "$logfile";
+    echo "Conflict: ";
+    echo "$isConflict";
     echo "======="
     git checkout "$currentBranch"
     exit 1;
