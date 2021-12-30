@@ -24,7 +24,7 @@ try
     echo "Conflict: ";
     echo "$isConflict";
     echo "======="
-    git checkout "$currentBranch"
+    git checkout "$currentBranch" >/dev/null 2>&1 ;
     exit 1;
   else
     git checkout "$currentBranch" -q >> $logfile && git merge "$repo"/"$branch" -q >> $logfile
