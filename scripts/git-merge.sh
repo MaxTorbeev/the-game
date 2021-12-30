@@ -11,12 +11,13 @@ logfile="${rootpath}/scripts/.git-merge.log"
 try
 (
   currentBranch=$( git symbolic-ref --short HEAD )
-  currentHead=$( git rev-parse --short HEAD )
 
-  echo "Current branch $currentBranch with hash $currentHead" >> "$logfile"
+  echo "Current branch $currentBranch with hash $( git rev-parse --short HEAD )"
   echo "=======" >> "$logfile"
 
+  # checkout to branch
   git checkout "$branch" -q >> $logfile
+  # and update branch from repo
   git pull "$repo" "$branch" -q >> $logfile
 
   isConflict="$(git merge-tree "$(git merge-base $currentBranch "$branch")" "$branch" $currentBranch | sed -ne '/^\+<<</,/^\+>>>/ p')"
