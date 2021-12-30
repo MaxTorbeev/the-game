@@ -32,5 +32,6 @@ try
   fi
 )
 catch || {
-  echo $ex_code
+  echo "Abort!"
+  echo "return with code: $ex_code"
 }
