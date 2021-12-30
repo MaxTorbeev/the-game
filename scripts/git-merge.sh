@@ -10,9 +10,10 @@ logfile="${rootpath}/scripts/.git-merge.log"
 
 try
 (
-  currentBranch=$( git symbolic-ref --short HEAD )
+  # current branch
+  current=$( git symbolic-ref --short HEAD )
 
-  echo "Current branch $currentBranch with hash $( git rev-parse --short HEAD )"
+  echo "Current branch $current with hash $( git rev-parse --short HEAD )"
   echo "======="
 
   # checkout to branch
@@ -21,16 +22,16 @@ try
   git pull "$repo" "$branch" -q >> $logfile
 
   # check conflict via git merge-tree
-  isConflict="$(git merge-tree "$(git merge-base $currentBranch "$branch")" "$branch" $currentBranch | sed -ne '/^\+<<</,/^\+>>>/ p')"
+  isConflict="$(git merge-tree "$(git merge-base "$current" "$branch")" "$branch" "$current" | sed -ne '/^\+<<</,/^\+>>>/ p')"
 
   if [ -n "$isConflict" ]; then
     echo "Conflict: ";
     echo "$isConflict";
-#    echo "======="
-#    git checkout "$currentBranch" >/dev/null 2>&1 ;
+    echo "======="
+    git checkout "$current" >/dev/null 2>&1 ;
   else
-    git checkout "$currentBranch" -q >> $logfile && git merge "$repo"/"$branch" -q >> $logfile
-    echo "Release has been merged to $currentBranch"
+    git checkout "$current" -q >> "$logfile" && git merge "$repo"/"$branch" -q >> "$logfile"
+    echo "Release has been merged to $current"
   fi
 )
 catch || {
