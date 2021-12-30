@@ -12,4 +12,3 @@ rootpath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; cd "../" >/dev/null 2>&1 ; p
 #echo $rootpath
 cd "$rootpath" && /bin/bash ./scripts/git-pull.sh
 cd "$rootpath" && /bin/bash ./scripts/git-merge.sh
-
