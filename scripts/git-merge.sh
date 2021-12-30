@@ -13,7 +13,7 @@ try
   currentBranch=$( git symbolic-ref --short HEAD )
 
   echo "Current branch $currentBranch with hash $( git rev-parse --short HEAD )"
-  echo "=======" >> "$logfile"
+  echo "======="
 
   # checkout to branch
   git checkout "$branch" -q >> $logfile
