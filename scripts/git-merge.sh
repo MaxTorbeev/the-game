@@ -24,6 +24,8 @@ try
   # check conflict via git merge-tree
   isConflict="$(git merge-tree "$(git merge-base "$current" "$branch")" "$branch" "$current" | sed -ne '/^\+<<</,/^\+>>>/ p')"
 
+  git merge-tree "$(git merge-base "$current" "$branch")" "$branch" "$current" >> $logfile
+
   if [ -n "$isConflict" ]; then
     echo "Conflict: ";
     echo "$isConflict";
