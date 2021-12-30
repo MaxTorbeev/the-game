@@ -20,14 +20,14 @@ try
   # and update branch from repo
   git pull "$repo" "$branch" -q >> $logfile
 
+  # check conflict via git merge-tree
   isConflict="$(git merge-tree "$(git merge-base $currentBranch "$branch")" "$branch" $currentBranch | sed -ne '/^\+<<</,/^\+>>>/ p')"
 
   if [ -n "$isConflict" ]; then
     echo "Conflict: ";
     echo "$isConflict";
-    echo "======="
-    git checkout "$currentBranch" >/dev/null 2>&1 ;
-    exit 1;
+#    echo "======="
+#    git checkout "$currentBranch" >/dev/null 2>&1 ;
   else
     git checkout "$currentBranch" -q >> $logfile && git merge "$repo"/"$branch" -q >> $logfile
     echo "Release has been merged to $currentBranch"
