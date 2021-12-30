@@ -25,11 +25,7 @@ app.get( "/about", ( req, res ) => {
     res.render( "about" ); // render the index template
 } );
 
-<<<<<<< HEAD
 // Add new comment bla bla 7
-=======
-// Add new comment bla bla 6
->>>>>>> d9ee184b7221b4880a28606644634d0650cc6231
 app.listen( port, () => {
     // tslint:disable-next-line:no-console
     console.log( `server started at http://localhost:${ port }` );
