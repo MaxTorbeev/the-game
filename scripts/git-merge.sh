@@ -15,9 +15,10 @@ try
   if [ -n "$release_exists" ]; then
     # Remove old local release branch
     git branch -D "$branch"
-    # Create actual local release branch
-    git checkout -b "$branch" "$repo"/"$branch"
   fi
+
+  # Create actual local release branch
+  git checkout -b "$branch" "$repo"/"$branch"
 
   # Set git-config values known to fix git errors
   git config core.eol lf
@@ -64,6 +65,6 @@ try
 catch || {
   echo "Abort!"
   echo "return with code: $ex_code"
-#  git branch -D "$branch"
-#  echo "remove $branch"
+  git branch -D "$branch"
+  echo "remove $branch"
 }
