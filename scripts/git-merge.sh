@@ -44,16 +44,16 @@ try
     git checkout "$current" >/dev/null 2>&1 ;
     git reset --hard >/dev/null 2>&1 ;
 
-#    git branch -D "$branch"
-#    echo "remove $branch"
+    git branch -D "$branch"
+    echo "remove $branch"
 
     exit 1;
   else
     git checkout "$current" >/dev/null 2>&1 ;
     git pull "$branch" >/dev/null 2>&1 ;
 
-#    git branch -D "$branch"
-#    echo "remove $branch"
+    git branch -D "$branch"
+    echo "remove $branch"
 
     echo "Finished!"
     exit 0;
