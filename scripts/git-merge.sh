@@ -10,6 +10,13 @@ logfile="${rootpath}/scripts/.git-merge.log"
 
 try
 (
+  # Set git-config values known to fix git errors
+  git config core.eol lf
+  git config core.autocrlf false
+  git config fsck.zeroPaddedFilemode ignore
+  git config fetch.fsck.zeroPaddedFilemode ignore
+  git config receive.fsck.zeroPaddedFilemode ignore
+
   # current branch
   current=$( git symbolic-ref --short HEAD )
 
