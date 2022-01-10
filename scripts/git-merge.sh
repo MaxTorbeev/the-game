@@ -43,6 +43,8 @@ try
 
   echo $difference;
 
+ git checkout "$current" >/dev/null 2>&1 ;
+
 #  if [ -n "$difference" ]; then
 #    echo "There is a difference: ";
 #    echo "$difference";
