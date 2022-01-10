@@ -30,7 +30,7 @@ try
   echo "======="
 
   # and update branch from repo
-  git pull "$repo" "$branch" -q >> $logfile
+  git merge "$repo"/"$branch" -q >> $logfile
 
   difference=$( git -C "$rootpath" diff -b -w --diff-algorithm=patience --compact-summary "$repo"/"$branch" | cat )
 
