@@ -34,9 +34,9 @@ try
   git checkout "$branch" -q >> $logfile
 
   # and update branch from repo
-#  git pull "$repo" "$branch" -q >> $logfile
+  git pull "$repo" "$branch" -q >> $logfile
 
-  git merge "$branch" -q >> $logfile
+#  git merge "$branch" -q >> $logfile
 
   difference=$( git -C "$rootpath" diff -b -w --diff-algorithm=patience --compact-summary "$repo"/"$branch" | cat )
 #  isConflict=$( git diff --name-only --diff-filter=U )
