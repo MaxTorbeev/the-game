@@ -10,6 +10,12 @@ logfile="${rootpath}/scripts/.git-merge.log"
 
 try
 (
+  # Remove old local release branch
+  git branch -D "$branch"
+
+  # Create actual local release branch
+  git checkout -b "$repo" "$branch"
+
   # Set git-config values known to fix git errors
   git config core.eol lf
   git config core.autocrlf false
@@ -18,18 +24,23 @@ try
   git config receive.fsck.zeroPaddedFilemode ignore
 
   # current branch
-  current=$( git symbolic-ref --short HEAD )
+  current=$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)
 
   echo "Current branch $current with hash $( git rev-parse --short HEAD )"
   echo "======="
 
-  # checkout to branch
+  # Checkout to release branch
+  # shellcheck disable=SC2129
   git checkout "$branch" -q >> $logfile
+
   # and update branch from repo
   git pull "$repo" "$branch" -q >> $logfile
 
-  # check conflict via git merge-tree
-  isConflict="$(git merge-tree "$(git merge-base "$current" "$branch")" "$branch" "$current" | sed -ne '/^\+<<</,/^\+>>>/ p')"
+  git merge "$repo"/"$branch" -q >> $logfile
+
+  git diff -b -w --diff-algorithm=patience --compact-summary origin/release >> $logfile
+
+  isConflict=$( git diff --name-only --diff-filter=U )
 
   if [ -n "$isConflict" ]; then
     echo "Conflict: ";
