@@ -41,24 +41,26 @@ try
   difference=$( git diff -b -w --diff-algorithm=patience --compact-summary "$repo"/"$branch" )
   isConflict=$( git diff --name-only --diff-filter=U )
 
-  if [ -n "$difference" ]; then
-    echo "There is a difference: ";
-    echo "$difference";
-    echo "======="
-    git checkout "$current" >/dev/null 2>&1 ;
-    git reset --hard >/dev/null 2>&1 ;
-    exit 1;
-  fi
+  echo $difference;
 
-  if [ -n "$isConflict" ]; then
-    echo "Conflict: ";
-    echo "$isConflict";
-    echo "======="
-    git checkout "$current" >/dev/null 2>&1 ;
-  else
-    git checkout "$current" -q >> "$logfile" && git merge "$repo"/"$branch" -q >> "$logfile"
-    echo "Release has been merged to $current"
-  fi
+#  if [ -n "$difference" ]; then
+#    echo "There is a difference: ";
+#    echo "$difference";
+#    echo "======="
+#    git checkout "$current" >/dev/null 2>&1 ;
+#    git reset --hard >/dev/null 2>&1 ;
+#    exit 1;
+#  fi
+#
+#  if [ -n "$isConflict" ]; then
+#    echo "Conflict: ";
+#    echo "$isConflict";
+#    echo "======="
+#    git checkout "$current" >/dev/null 2>&1 ;
+#  else
+#    git checkout "$current" -q >> "$logfile" && git merge "$repo"/"$branch" -q >> "$logfile"
+#    echo "Release has been merged to $current"
+#  fi
 )
 catch || {
   echo "Abort!"
