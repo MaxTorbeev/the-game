@@ -32,7 +32,7 @@ try
   # and update branch from repo
   git pull "$repo" "$branch" -q >> $logfile
 
-  difference=$( git -C "$rootpath" diff -b -w --diff-algorithm=patience --compact-summary "$repo"/"$branch" )
+  difference=$( git -C "$rootpath" diff -b -w --diff-algorithm=patience --compact-summary "$repo"/"$branch" | cat )
 #  isConflict=$( git diff --name-only --diff-filter=U )
 
   echo $difference;
