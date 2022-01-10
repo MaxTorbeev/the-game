@@ -33,7 +33,6 @@ try
   git pull "$repo" "$branch" -q >> $logfile
 
   difference=$( git -C "$rootpath" diff -b -w --diff-algorithm=patience --compact-summary "$repo"/"$branch" | cat )
-#  isConflict=$( git diff --name-only --diff-filter=U )
 
   if [ -n "$difference" ]; then
     echo "There is a difference: ";
@@ -42,6 +41,11 @@ try
     git checkout "$current" >/dev/null 2>&1 ;
     git reset --hard >/dev/null 2>&1 ;
     exit 1;
+  else
+    git checkout "$current" >/dev/null 2>&1 ;
+    git pull "$branch" >/dev/null 2>&1 ;
+    echo "Finished!"
+    exit 0;
   fi
 #
 #  if [ -n "$isConflict" ]; then
