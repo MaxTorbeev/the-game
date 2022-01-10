@@ -11,7 +11,7 @@ logfile="${rootpath}/scripts/.git-merge.log"
 try
 (
   # Remove old local release branch
-#  git branch -D "$branch"
+  git branch -D "$branch"
 
   # Create actual local release branch
   git checkout -b "$branch" "$repo" "$branch"
@@ -61,4 +61,6 @@ try
 catch || {
   echo "Abort!"
   echo "return with code: $ex_code"
+  git branch -D "$branch"
+  echo "remove $branch"
 }
