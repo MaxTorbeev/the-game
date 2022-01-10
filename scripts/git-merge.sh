@@ -38,7 +38,7 @@ try
 
   git merge "$repo"/"$branch" -q >> $logfile
 
-  difference=$( git diff -b -w --diff-algorithm=patience --compact-summary "$repo"/"$branch" | cat )
+  difference=$( git -C diff -b -w --diff-algorithm=patience --compact-summary "$repo"/"$branch" | cat )
   isConflict=$( git diff --name-only --diff-filter=U )
 
   echo $difference;
