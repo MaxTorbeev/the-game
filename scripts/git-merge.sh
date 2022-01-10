@@ -15,10 +15,9 @@ try
   if [ -n "$release_exists" ]; then
     # Remove old local release branch
     git branch -D "$branch"
+    # Create actual local release branch
+    git checkout -b "$branch" "$repo"/"$branch"
   fi
-
-  # Create actual local release branch
-  git checkout -b "$branch" "$repo"/"$branch"
 
   # Set git-config values known to fix git errors
   git config core.eol lf
@@ -27,7 +26,7 @@ try
   git config fetch.fsck.zeroPaddedFilemode ignore
   git config receive.fsck.zeroPaddedFilemode ignore
 
-  # current branch
+  # Current branch
   current=$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)
 
   echo "Current branch $current with hash $( git rev-parse --short HEAD )"
@@ -44,10 +43,18 @@ try
     echo "======="
     git checkout "$current" >/dev/null 2>&1 ;
     git reset --hard >/dev/null 2>&1 ;
+
+    git branch -D "$branch"
+    echo "remove $branch"
+
     exit 1;
   else
     git checkout "$current" >/dev/null 2>&1 ;
     git pull "$branch" >/dev/null 2>&1 ;
+
+    git branch -D "$branch"
+    echo "remove $branch"
+
     echo "Finished!"
     exit 0;
   fi
