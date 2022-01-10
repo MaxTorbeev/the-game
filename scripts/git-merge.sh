@@ -27,7 +27,7 @@ try
   current=$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)
 
   echo "Current branch $current with hash $( git rev-parse --short HEAD )"
-  printf "======="
+  echo "======="
 
   # and update branch from repo
   git merge "$repo"/"$branch" -q >> $logfile
