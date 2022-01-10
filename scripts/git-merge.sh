@@ -16,7 +16,7 @@ try
     # Remove old local release branch
     git branch -D "$branch"
     # Create actual local release branch
-    git checkout -b "$branch" "$repo"/"$branch"
+    git branch -d "$branch" "$repo"/"$branch"
   fi
 
   # Set git-config values known to fix git errors
