@@ -35,18 +35,14 @@ try
   difference=$( git -C "$rootpath" diff -b -w --diff-algorithm=patience --compact-summary "$repo"/"$branch" | cat )
 #  isConflict=$( git diff --name-only --diff-filter=U )
 
-  echo $difference;
-
-  git checkout "$current" >/dev/null 2>&1 ;
-
-#  if [ -n "$difference" ]; then
-#    echo "There is a difference: ";
-#    echo "$difference";
-#    echo "======="
-#    git checkout "$current" >/dev/null 2>&1 ;
-#    git reset --hard >/dev/null 2>&1 ;
-#    exit 1;
-#  fi
+  if [ -n "$difference" ]; then
+    echo "There is a difference: ";
+    echo "$difference";
+    echo "======="
+    git checkout "$current" >/dev/null 2>&1 ;
+    git reset --hard >/dev/null 2>&1 ;
+    exit 1;
+  fi
 #
 #  if [ -n "$isConflict" ]; then
 #    echo "Conflict: ";
