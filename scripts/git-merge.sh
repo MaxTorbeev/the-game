@@ -11,10 +11,10 @@ logfile="${rootpath}/scripts/.git-merge.log"
 try
 (
   # Remove old local release branch
-  git branch -D "$branch"
-
-  # Create actual local release branch
-  git checkout -b "$branch" "$repo"/"$branch"
+#  git branch -D "$branch"
+#
+#  # Create actual local release branch
+#  git checkout -b "$branch" "$repo"/"$branch"
 
   # Set git-config values known to fix git errors
   git config core.eol lf
@@ -23,13 +23,11 @@ try
   git config fetch.fsck.zeroPaddedFilemode ignore
   git config receive.fsck.zeroPaddedFilemode ignore
 
-  git checkout "$current" >/dev/null 2>&1 ;
-
   # current branch
   current=$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)
 
   echo "Current branch $current with hash $( git rev-parse --short HEAD )"
-  echo "======="
+  printf "======="
 
   # and update branch from repo
   git merge "$repo"/"$branch" -q >> $logfile
