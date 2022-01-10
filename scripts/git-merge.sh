@@ -38,9 +38,17 @@ try
 
   git merge "$repo"/"$branch" -q >> $logfile
 
-  git diff -b -w --diff-algorithm=patience --compact-summary origin/release >> $logfile
-
+  difference=$( git diff -b -w --diff-algorithm=patience --compact-summary "$repo"/"$branch" )
   isConflict=$( git diff --name-only --diff-filter=U )
+
+  if [ -n "$difference" ]; then
+    echo "There is a difference: ";
+    echo "$difference";
+    echo "======="
+    git checkout "$current" >/dev/null 2>&1 ;
+    git reset --hard >/dev/null 2>&1 ;
+    exit 1;
+  fi
 
   if [ -n "$isConflict" ]; then
     echo "Conflict: ";
