@@ -10,13 +10,18 @@ logfile="${rootpath}/scripts/.git-merge.log"
 
 try
 (
+  # Current branch
+  current=$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)
+
   release_exists=$( git show-ref refs/heads/"$branch")
 
   if [ -n "$release_exists" ]; then
     # Remove old local release branch
     git branch -D "$branch"
     # Create actual local release branch
-    git branch -d "$branch" "$repo"/"$branch"
+    git checkout -b "$branch" "$repo"/"$branch"
+
+    git checkout "$current" >/dev/null 2>&1 ;
   fi
 
   # Set git-config values known to fix git errors
@@ -25,9 +30,6 @@ try
   git config fsck.zeroPaddedFilemode ignore
   git config fetch.fsck.zeroPaddedFilemode ignore
   git config receive.fsck.zeroPaddedFilemode ignore
-
-  # Current branch
-  current=$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)
 
   echo "Current branch $current with hash $( git rev-parse --short HEAD )"
   echo "======="
