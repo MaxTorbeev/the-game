@@ -14,7 +14,7 @@ try
   git branch -D "$branch"
 
   # Create actual local release branch
-  git checkout -b "$repo" "$branch"
+  git checkout -b "$branch" "$repo" "$branch"
 
   # Set git-config values known to fix git errors
   git config core.eol lf
