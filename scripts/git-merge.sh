@@ -29,10 +29,6 @@ try
   echo "Current branch $current with hash $( git rev-parse --short HEAD )"
   echo "======="
 
-  # Checkout to release branch
-  # shellcheck disable=SC2129
-  git checkout "$branch" -q >> $logfile
-
   # and update branch from repo
   git pull "$repo" "$branch" -q >> $logfile
 
