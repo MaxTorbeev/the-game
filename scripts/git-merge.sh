@@ -10,11 +10,14 @@ logfile="${rootpath}/scripts/.git-merge.log"
 
 try
 (
-  # Remove old local release branch
-#  git branch -D "$branch"
-#
-#  # Create actual local release branch
-#  git checkout -b "$branch" "$repo"/"$branch"
+  release_exists=$( git show-ref refs/heads/"$branch")
+
+  if [ -n "$release_exists" ]; then
+    # Remove old local release branch
+    git branch -D "$branch"
+    # Create actual local release branch
+    git checkout -b "$branch" "$repo"/"$branch"
+  fi
 
   # Set git-config values known to fix git errors
   git config core.eol lf
@@ -61,6 +64,6 @@ try
 catch || {
   echo "Abort!"
   echo "return with code: $ex_code"
-  git branch -D "$branch"
-  echo "remove $branch"
+#  git branch -D "$branch"
+#  echo "remove $branch"
 }
