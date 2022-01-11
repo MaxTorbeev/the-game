@@ -1,36 +1,67 @@
 #!/bin/bash
 
-. ./helpers.sh --source-only
+# path to root repository folder
+rootpath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; cd "../" >/dev/null 2>&1 ; pwd -P )"
+
+. "$rootpath"/scripts/helpers.sh --source-only
 
 # set exit on any error
 set -e
 
-# log file
-logfile="${rootpath}/scripts/.git-merge.log"
+# Clear log files
+> "$merge_log_file";
+> "$diff_log_file";
 
 try
 (
-  currentBranch=$( git symbolic-ref --short HEAD )
-  currentHead=$( git rev-parse --short HEAD )
+  # Get .gitdiffignore file
+  # Wrap all strings in quotes and remove spaces
+  ignores=$(cat -s "$rootpath"/.gitdiffignore | tr '\n' ' ' )
 
-  echo "Current branch $currentBranch with hash $currentHead"
+  # Current branch
+  current=$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)
+
+  echo "======="
+  echo "Current branch $current with hash $( git rev-parse --short HEAD )"
   echo "======="
 
-  git checkout "$branch" -q >> $logfile && git pull "$repo" "$branch" -q >> $logfile
+  # Release branch is exists
+  if [ -n "$( git show-ref refs/heads/"$branch")" ]; then
+    # Remove old local release branch
+    git branch -D "$branch" >> "$merge_log_file"
+  fi
 
-  isConflict="$(git merge-tree "$(git merge-base $currentBranch "$branch")" "$branch" $currentBranch | sed -ne '/^\+<<</,/^\+>>>/ p')"
+  # Create actual local release branch and checkout him
+  git checkout -b "$branch" "$repo"/"$branch";
+  # Checkout to current branch
+  git checkout "$current" -q >> "$merge_log_file";
+  # and update branch from repo
+  git merge "$branch" -q >> "$merge_log_file" ;
 
-  if [ -n "$isConflict" ]; then
-    echo "Conflict: ";
-    echo "$isConflict";
+  # Difference current branch with remote release and save to log file
+  git -C ${rootpath} diff -b -w --compact-summary ${current} ${repo}/${branch} ${ignores} > $diff_log_file;
+
+  difference=$(cat -s "$diff_log_file" )
+
+  if [ -n "$difference" ]; then
+    echo "There is a difference: ";
+    echo "$difference";
     echo "======="
-    git checkout "$currentBranch"
+    git checkout "$current" >/dev/null 2>&1 ;
+    git reset --hard >/dev/null 2>&1 ;
+    echo "There are differences in the code" >> "$merge_log_file"
     exit 1;
   else
-    git checkout "$currentBranch" -q >> $logfile && git merge "$repo"/"$branch" -q >> $logfile
-    echo "Release has been merged to $currentBranch"
+    git checkout "$current" -q >> "$merge_log_file" ;
+    git merge "$branch" -q >> "$merge_log_file" ;
+    echo "======="
+    echo "Finished!"
+    exit 0;
   fi
 )
 catch || {
-  echo $ex_code
+  echo "Abort!"
+  echo "return with code: $ex_code"
+  git branch -D "$branch"
+  echo "Remove local $branch"
 }
