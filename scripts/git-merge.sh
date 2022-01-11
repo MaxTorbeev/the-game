@@ -71,8 +71,9 @@ try
 )
 catch || {
   echo "Abort!"
-  echo "return with code: $ex_code"
+  echo "Return with code: $ex_code"
   git reset --hard >/dev/null 2>&1 ;
+  echo "Reset branch..."
   git branch -D "$branch"
   echo "Remove local $branch"
 }
