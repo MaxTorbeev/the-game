@@ -44,11 +44,23 @@ try
   difference=$(cat -s "$diff_log_file" )
 
   if [ -n "$difference" ]; then
+
+    conflicts= $( git diff --name-only --diff-filter=U );
+
+    # Check for conflicts
+    if [ -n "$conflicts" ]; then
+      echo "Conflicts: ";
+      echo "$conflicts";
+      echo "======="
+      git reset --hard >/dev/null 2>&1 ;
+      exit 1;
+    fi
+
     echo "There is a difference: ";
     echo "$difference";
     echo "======="
     git checkout "$current" >/dev/null 2>&1 ;
-    git reset --hard >/dev/null 2>&1 ;
+
     echo "There are differences in the code" >> "$merge_log_file"
     exit 1;
   else
