@@ -44,8 +44,10 @@ try
   difference=$(cat -s "$diff_log_file" )
 
   if [ -n "$difference" ]; then
+
     conflicts= $( git diff --name-only --diff-filter=U );
 
+    # Check for conflicts
     if [ -n "$conflicts" ]; then
       echo "Conflicts: ";
       echo "$conflicts";
