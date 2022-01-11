@@ -42,19 +42,17 @@ try
   git -C ${rootpath} diff -b -w --compact-summary ${current} ${repo}/${branch} ${ignores} > $diff_log_file;
 
   difference=$(cat -s "$diff_log_file" )
+  conflicts=$( git diff --name-only --diff-filter=U );
+
+  # Check for conflicts
+  if [ -n "$conflicts" ]; then
+    echo "Conflicts: ";
+    echo "$conflicts";
+    echo "======="
+    exit 1;
+  fi
 
   if [ -n "$difference" ]; then
-
-    conflicts= $( git diff --name-only --diff-filter=U );
-
-    # Check for conflicts
-    if [ -n "$conflicts" ]; then
-      echo "Conflicts: ";
-      echo "$conflicts";
-      echo "======="
-      exit 1;
-    fi
-
     echo "There is a difference: ";
     echo "$difference";
     echo "======="
