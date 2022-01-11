@@ -59,13 +59,13 @@ try
     git checkout "$current" >/dev/null 2>&1 ;
     echo "There are differences in the code" >> "$merge_log_file"
     exit 1;
-  else
-    git checkout "$current" -q >> "$merge_log_file" ;
-    git merge "$branch" -q >> "$merge_log_file" ;
-    echo "======="
-    echo "Finished!"
-    exit 0;
   fi
+
+  git checkout "$current" -q >> "$merge_log_file" ;
+  git merge "$branch" -q >> "$merge_log_file" ;
+  echo "======="
+  echo "Finished!"
+  exit 0;
 )
 catch || {
   echo "Abort!"
