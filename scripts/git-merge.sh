@@ -1,43 +1,47 @@
 #!/bin/bash
 
-. ./helpers.sh --source-only
+# path to root repository folder
+rootpath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; cd "../" >/dev/null 2>&1 ; pwd -P )"
+
+. "$rootpath"/scripts/helpers.sh --source-only
 
 # set exit on any error
 set -e
 
-# log file
-logfile="${rootpath}/scripts/.git-merge.log"
+# Clear log files
+> "$merge_log_file";
+> "$diff_log_file";
 
 try
 (
+  # Get .gitdiffignore file
+  # Wrap all strings in quotes and remove spaces
+  ignores=$(cat -s "$rootpath"/.gitdiffignore | tr '\n' ' ' )
+
   # Current branch
   current=$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)
 
-  release_exists=$( git show-ref refs/heads/"$branch")
-
-  if [ -n "$release_exists" ]; then
-    # Remove old local release branch
-    git branch -D "$branch"
-    # Create actual local release branch
-    git checkout -b "$branch" "$repo"/"$branch"
-
-    git checkout "$current" >/dev/null 2>&1 ;
-  fi
-
-  # Set git-config values known to fix git errors
-  git config core.eol lf
-  git config core.autocrlf false
-  git config fsck.zeroPaddedFilemode ignore
-  git config fetch.fsck.zeroPaddedFilemode ignore
-  git config receive.fsck.zeroPaddedFilemode ignore
-
+  echo "======="
   echo "Current branch $current with hash $( git rev-parse --short HEAD )"
   echo "======="
 
-  # and update branch from repo
-  git merge "$repo"/"$branch" -q >> $logfile
+  # Release branch is exists
+  if [ -n "$( git show-ref refs/heads/"$branch")" ]; then
+    # Remove old local release branch
+    git branch -D "$branch" >> "$merge_log_file"
+  fi
 
-  difference=$( git -C "$rootpath" diff -b -w --diff-algorithm=patience --compact-summary "$repo"/"$branch" | cat )
+  # Create actual local release branch and checkout him
+  git checkout -b "$branch" "$repo"/"$branch";
+  # Checkout to current branch
+  git checkout "$current" -q >> "$merge_log_file";
+  # and update branch from repo
+  git merge "$branch" -q >> "$merge_log_file" ;
+
+  # Difference current branch with remote release and save to log file
+  git -C ${rootpath} diff -b -w --compact-summary ${current} ${repo}/${branch} ${ignores} > $diff_log_file;
+
+  difference=$(cat -s "$diff_log_file" )
 
   if [ -n "$difference" ]; then
     echo "There is a difference: ";
@@ -45,28 +49,19 @@ try
     echo "======="
     git checkout "$current" >/dev/null 2>&1 ;
     git reset --hard >/dev/null 2>&1 ;
+    echo "There are differences in the code" >> "$merge_log_file"
     exit 1;
   else
-    git checkout "$current" >/dev/null 2>&1 ;
-    git pull "$branch" >/dev/null 2>&1 ;
+    git checkout "$current" -q >> "$merge_log_file" ;
+    git merge "$branch" -q >> "$merge_log_file" ;
     echo "======="
     echo "Finished!"
     exit 0;
   fi
-#
-#  if [ -n "$isConflict" ]; then
-#    echo "Conflict: ";
-#    echo "$isConflict";
-#    echo "======="
-#    git checkout "$current" >/dev/null 2>&1 ;
-#  else
-#    git checkout "$current" -q >> "$logfile" && git merge "$repo"/"$branch" -q >> "$logfile"
-#    echo "Release has been merged to $current"
-#  fi
 )
 catch || {
   echo "Abort!"
   echo "return with code: $ex_code"
   git branch -D "$branch"
-  echo "remove $branch"
+  echo "Remove local $branch"
 }
