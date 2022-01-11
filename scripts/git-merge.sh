@@ -41,8 +41,6 @@ try
   # Difference current branch with remote release and save to log file
   git -C ${rootpath} diff -b -w --compact-summary ${current} ${repo}/${branch} -- . ${ignores} > $diff_log_file;
 
-  echo git -C ${rootpath} diff -b -w --compact-summary ${current} ${repo}/${branch} -- . ${ignores}
-
   difference=$(cat -s "$diff_log_file" )
   conflicts=$( git diff --name-only --diff-filter=U );
 
