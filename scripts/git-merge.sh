@@ -44,6 +44,7 @@ try
   difference=$(cat -s "$diff_log_file" )
 
   if [ -n "$difference" ]; then
+    echo "$( git diff --name-only --diff-filter=U )"
     echo "There is a difference: ";
     echo "$difference";
     echo "======="
