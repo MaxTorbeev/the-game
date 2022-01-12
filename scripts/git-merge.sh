@@ -1,10 +1,11 @@
 #!/bin/bash
 
+printf "Merging... "
+
 # path to root repository folder
 rootpath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; cd "../" >/dev/null 2>&1 ; pwd -P )"
 
 . "$rootpath"/scripts/helpers.sh --source-only
-
 # set exit on any error
 set -e
 
@@ -14,6 +15,18 @@ set -e
 
 try
 (
+
+  # get parameters
+  while getopts b:r flag
+  do
+      case "${flag}" in
+          b) branch=${OPTARG};;
+          r) repo=${OPTARG};;
+          *) echo "Unknown parameter passed: $1"; exit 1 ;;
+      esac
+      shift
+  done
+
   # Get .gitdiffignore file
   # Wrap all strings in quotes and remove spaces
   ignores=$(cat -s "$rootpath"/.gitdiffignore | tr '\n' ' ' )
@@ -21,9 +34,11 @@ try
   # Current branch
   current=$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)
 
-  echo "======="
-  echo "Current branch $current with hash $( git rev-parse --short HEAD )"
-  echo "======="
+  {
+    echo "======="
+    echo "Current branch $current with hash $( git rev-parse --short HEAD )"
+    echo "======="
+  } >> "$merge_log_file"
 
   # Release branch is exists
   if [ -n "$( git show-ref refs/heads/"$branch")" ]; then
@@ -32,11 +47,10 @@ try
   fi
 
   # Create actual local release branch and checkout him
-  git checkout -b "$branch" "$repo"/"$branch";
-  # Checkout to current branch
-  git checkout "$current" -q >> "$merge_log_file";
-  # and update branch from repo
-  git merge "$branch" -q >> "$merge_log_file" ;
+  # Checkout to current branch and update branch from repo
+  {
+    git checkout -q -b "$branch" "$repo"/"$branch" && git checkout "$current" -q && git merge "$branch" -q
+  } >> "$merge_log_file"
 
   # Difference current branch with remote release and save to log file
   git -C ${rootpath} diff -b -w --compact-summary ${current} ${repo}/${branch} -- . ${ignores} > $diff_log_file;
@@ -46,30 +60,34 @@ try
 
   # Check for conflicts
   if [ -n "$conflicts" ]; then
-    echo "Conflicts: ";
-    echo "$conflicts";
-    echo "======="
+    echo "Error. Conflicts: " >> "$merge_log_file";
+    echo "$conflicts" >> "$merge_log_file";
+    echo "Completed with errors. Branch conflict.";
+
     exit 1;
   fi
 
   if [ -n "$difference" ]; then
-    echo "There is a difference: ";
-    echo "$difference";
-    echo "======="
+    echo "Error. There is a difference: " >> "$merge_log_file";
+    echo "$difference" >> "$merge_log_file";
+    echo "Completed with errors. There are differences in branches.";
+
     exit 1;
   fi
+  {
+    echo "======="
+    echo "Merge ${branch} branch to ${current} was successful"
+  } >> "$merge_log_file"
 
-  git checkout "$current" -q >> "$merge_log_file" ;
-  git merge "$branch" -q >> "$merge_log_file" ;
-  echo "======="
-  echo "Finished!"
+  echo "Done!"
   exit 0;
 )
 catch || {
-  echo "Abort!"
-  echo "Return with code: $ex_code"
-  git reset --hard >/dev/null 2>&1 ;
-  echo "Reset branch..."
-  git branch -D "$branch"
-  echo "Remove local $branch"
+  {
+    echo "Return with code: ${ex_code}. Reset ${current} branch."
+    git reset --hard;
+    git branch -D "$branch"
+  } >> "$merge_log_file"
+
+  printf "Abort!"
 }
