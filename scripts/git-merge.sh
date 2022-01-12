@@ -11,21 +11,21 @@ set -e
 > "$merge_log_file";
 > "$diff_log_file";
 
+# get parameters
+while getopts b:r flag
+do
+    case "${flag}" in
+        b) branch=${OPTARG};;
+        r) repo=${OPTARG};;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
+
+echo "Merging with ${branch} branch... "
+
 try
 (
-  # get parameters
-  while getopts b:r flag
-  do
-      case "${flag}" in
-          b) branch=${OPTARG};;
-          r) repo=${OPTARG};;
-          *) echo "Unknown parameter passed: $1"; exit 1 ;;
-      esac
-      shift
-  done
-
-  echo "Merging with ${branch}... "
-
   # Get .gitdiffignore file
   # Wrap all strings in quotes and remove spaces
   ignores=$(cat -s "$rootpath"/.gitdiffignore | tr '\n' ' ' )
@@ -88,5 +88,5 @@ catch || {
     git branch -D "$branch"
   } >> "$merge_log_file"
 
-  printf "Abort!"
+  echo "Abort!"
 }
