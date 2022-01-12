@@ -35,11 +35,14 @@ try
 
   # Check git status
   status="$(git -C "$rootpath" status -uno --porcelain)"
-  echo $status
 
-  exit 0;
+  if [ -n "$status" ]; then
+    echo "Error. There are no saved files: " >> "$merge_log_file";
+    echo "$status" >> "$merge_log_file";
+    echo $status;
 
-
+    exit 0;
+  fi
 
   {
     echo "======="
