@@ -33,6 +33,14 @@ try
   # Current branch
   current=$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)
 
+  # Check git status
+  status="$(git -C "$rootpath" status -uno --porcelain)"
+  echo $status
+
+  exit 0;
+
+
+
   {
     echo "======="
     echo "Current branch $current with hash $( git rev-parse --short HEAD )"
