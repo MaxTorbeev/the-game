@@ -1,7 +1,5 @@
 #!/bin/bash
 
-printf "Merging... "
-
 # path to root repository folder
 rootpath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; cd "../" >/dev/null 2>&1 ; pwd -P )"
 
@@ -15,7 +13,6 @@ set -e
 
 try
 (
-
   # get parameters
   while getopts b:r flag
   do
@@ -26,6 +23,8 @@ try
       esac
       shift
   done
+
+  echo "Merging with ${branch}... "
 
   # Get .gitdiffignore file
   # Wrap all strings in quotes and remove spaces
