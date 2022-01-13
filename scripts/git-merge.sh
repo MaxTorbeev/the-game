@@ -29,7 +29,7 @@ try
   # Get .gitdiffignore file
   # Wrap all strings in quotes and remove spaces
   ignore_file="$rootpath"/.gitdiffignore;
-
+  ignores=""
   if [ -f "${ignore_file}" ]; then
     ignores=$( cat -s "${ignore_file}" | tr '\n' ' ' );
   fi
