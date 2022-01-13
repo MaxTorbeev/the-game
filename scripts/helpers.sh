@@ -15,6 +15,15 @@ merge_log_file="${rootpath}/scripts/.git-merge.log"
 # diff log file
 diff_log_file="${rootpath}/scripts/.diff.log"
 
+# Get .gitdiffignore file
+# Wrap all strings in quotes and remove spaces
+ignore_file="$rootpath"/.gitdiffignore;
+ignores=":!.gitdiffignore " # Set default files
+
+if [ -f "${ignore_file}" ]; then
+  ignores+=$( cat -s "${ignore_file}" | sed -e 's/^.\{1,\}$/'':!&''/' | tr '\n' ' ' );
+fi
+
 function try()
 {
     [[ $- = *e* ]]; SAVED_OPT_E=$?

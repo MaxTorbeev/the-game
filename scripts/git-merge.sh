@@ -4,7 +4,7 @@
 rootpath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; cd "../" >/dev/null 2>&1 ; pwd -P )"
 
 . "$rootpath"/scripts/helpers.sh --source-only
-# set exit on any error
+# Set exit on any error
 set -e
 
 # Clear log files
@@ -12,9 +12,10 @@ set -e
 > "$diff_log_file";
 
 # get parameters
-while getopts b:r flag
+while getopts b:r:f flag
 do
     case "${flag}" in
+        f) force=true;;
         b) branch=${OPTARG};;
         r) repo=${OPTARG};;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
@@ -22,20 +23,26 @@ do
     shift
 done
 
+# Current branch
+current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
+current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} );
+
 echo "Слияние ветки ${branch}... "
 
 try
 (
-  # Get .gitdiffignore file
-  # Wrap all strings in quotes and remove spaces
-  ignore_file="$rootpath"/.gitdiffignore;
-  ignores=""
-  if [ -f "${ignore_file}" ]; then
-    ignores=$( cat -s "${ignore_file}" | tr '\n' ' ' );
+  if [ -n "$( git -C "${rootpath}" diff -b -w --name-only "${current}" "${current_remote}" | cat )" ]; then
+    echo "Ошибка. Ветки ${current} не совпадает с удаленным репозиторием";
+    exit 0;
   fi
 
-  # Current branch
-  current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
+  if [ -z "$( git ls-remote --exit-code --heads ${repo} ${branch} )" ]; then
+    echo "Ошибка. Ветки ${branch} не существует в ${repo}";
+    exit 0;
+  fi
+
+  # Save branch differences to log file
+  git -C "${rootpath}" diff -b -w --name-only "${current}" "${repo}"/"${branch}" > "$diff_log_file"
 
   # Check git status
   status="$( git -C "$rootpath" status -uno --porcelain )";
@@ -53,9 +60,9 @@ try
   git fetch "$repo" "$branch" -q && git merge "$repo"/"$branch" -q;
 
   # Difference current branch with remote release and save to log file
-  git -C "${rootpath}" diff -b -w --compact-summary "${current}" "${repo}"/"${branch}" -- . ':!.gitdiffignore' "${ignores}" > "$diff_log_file";
+  difference=$( git -C ${rootpath} diff -b -w --stat ${current} ${repo}/${branch} -- . ${ignores} | cat );
 
-  difference=$( cat -s "$diff_log_file" );
+  # Check conflicts
   conflicts=$( git diff --name-only --diff-filter=U );
 
   # Check for conflicts
