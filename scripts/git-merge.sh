@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Текущая ветка будет резетнута до состояния удаленной ветки
+force=false;
+
 # path to root repository folder
 rootpath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; cd "../" >/dev/null 2>&1 ; pwd -P )"
 
@@ -57,7 +60,13 @@ try
   echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD )";
 
   # Try merge current branch with remote
-  git fetch "$repo" "$branch" -q && git merge "$repo"/"$branch" -q;
+  git fetch "$repo" "$branch" -q
+
+  if [ "$force" ]; then
+    git merge "$repo"/"$branch" -Xtheir -q;
+  else
+    git merge "$repo"/"$branch" -q;
+  fi
 
   # Difference current branch with remote release and save to log file
   difference=$( git -C ${rootpath} diff -b -w --stat ${current} ${repo}/${branch} -- . ${ignores} | cat );
@@ -80,12 +89,10 @@ try
     exit 1;
   fi
 
-  echo "=======";
   echo "Слияние ветки ${branch} с ${current} прошло успешно";
 
   git push;
 
-  echo "Done!";
   exit 0;
 )
 catch || {
