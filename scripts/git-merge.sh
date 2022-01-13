@@ -41,13 +41,13 @@ try
   status="$( git -C "$rootpath" status -uno --porcelain )";
 
   if [ -n "$status" ]; then
-    echo "Error. There are no saved files: ";
+    echo "Ошибка. Имеются не зафиксированные файлы: ";
     echo "$status";
 
     exit 0;
   fi
 
-  echo "Текущая ветка $current имеет хэш $( git rev-parse --short HEAD )";
+  echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD )";
 
   # Try merge current branch with remote
   git fetch "$repo" "$branch" -q && git merge "$repo"/"$branch" -q;
@@ -60,23 +60,21 @@ try
 
   # Check for conflicts
   if [ -n "$conflicts" ]; then
-    echo "Error. Conflicts: ";
+    echo "Ошибка. Имеются конфликты: ";
     echo "$conflicts";
-    echo "Completed with errors. Branch conflict.";
 
     exit 1;
   fi
 
   if [ -n "$difference" ]; then
-    echo "Error. There is a difference: ";
+    echo "Ошибка. После слияния имеется разница с удаленным репозиторием: ";
     echo "$difference";
-    echo "Completed with errors. There are differences in branches.";
 
     exit 1;
   fi
 
   echo "=======";
-  echo "Merge ${branch} branch to ${current} was successful";
+  echo "Слияние ветки ${branch} с ${current} прошло успешно";
 
   git -q push;
   echo "Pushed to remote";
@@ -85,8 +83,6 @@ try
   exit 0;
 )
 catch || {
-  echo "Return with code: ${ex_code}. Reset ${current} branch.";
+  echo "Возврат в исходное состояние ветки ${current}.";
   git reset --hard;
-
-  echo "Abort!"
 }
