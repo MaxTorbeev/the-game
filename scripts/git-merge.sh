@@ -22,7 +22,7 @@ do
     shift
 done
 
-echo "Merging with ${branch} branch... "
+echo "Слияние ветки ${branch}... "
 
 try
 (
@@ -56,9 +56,8 @@ try
     git branch -D "$branch";
   fi
 
-  # Create actual local release branch and checkout him
-  # Checkout to current branch and update branch from repo
-  git checkout -q -b "$branch" "$repo"/"$branch" && git checkout "$current" -q && git merge "$branch" -q;
+  # Try merge current branch with remote
+  git fetch "$repo"/"$branch" -q && git merge "$branch" "$repo"/"$branch" -q;
 
   # Difference current branch with remote release and save to log file
   git -C "${rootpath}" diff -b -w --compact-summary "${current}" "${repo}"/"${branch}" -- . ':!.gitdiffignore' "${ignores}" > "$diff_log_file";
