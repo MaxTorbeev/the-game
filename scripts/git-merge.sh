@@ -28,76 +28,74 @@ try
 (
   # Get .gitdiffignore file
   # Wrap all strings in quotes and remove spaces
-  ignores=$(cat -s "$rootpath"/.gitdiffignore | tr '\n' ' ' )
+  ignore_file="$rootpath"/.gitdiffignore;
+
+  if [ -f "${ignore_file}" ]; then
+    ignores=$( cat -s "${ignore_file}" | tr '\n' ' ' );
+  fi
 
   # Current branch
-  current=$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)
+  current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
 
   # Check git status
-  status="$(git -C "$rootpath" status -uno --porcelain)"
+  status="$( git -C "$rootpath" status -uno --porcelain )";
 
   if [ -n "$status" ]; then
-    echo "Error. There are no saved files: " >> "$merge_log_file";
-    echo "$status" >> "$merge_log_file";
+    echo "Error. There are no saved files: ";
+    echo "$status";
     echo $status;
 
     exit 0;
   fi
 
-  {
-    echo "======="
-    echo "Current branch $current with hash $( git rev-parse --short HEAD )"
-    echo "======="
-  } >> "$merge_log_file"
+  echo "Current branch $current with hash $( git rev-parse --short HEAD )";
 
   # Release branch is exists
   if [ -n "$( git show-ref refs/heads/"$branch")" ]; then
     # Remove old local release branch
-    git branch -D "$branch" >> "$merge_log_file"
+    git branch -D "$branch";
   fi
 
   # Create actual local release branch and checkout him
   # Checkout to current branch and update branch from repo
-  {
-    git checkout -q -b "$branch" "$repo"/"$branch" && git checkout "$current" -q && git merge "$branch" -q
-  } >> "$merge_log_file"
+  git checkout -q -b "$branch" "$repo"/"$branch" && git checkout "$current" -q && git merge "$branch" -q;
 
   # Difference current branch with remote release and save to log file
-  git -C ${rootpath} diff -b -w --compact-summary ${current} ${repo}/${branch} -- . ${ignores} > $diff_log_file;
+  git -C "${rootpath}" diff -b -w --compact-summary "${current}" "${repo}"/"${branch}" -- . ':!.gitdiffignore' "${ignores}" > "$diff_log_file";
 
-  difference=$(cat -s "$diff_log_file" )
+  difference=$( cat -s "$diff_log_file" );
   conflicts=$( git diff --name-only --diff-filter=U );
 
   # Check for conflicts
   if [ -n "$conflicts" ]; then
-    echo "Error. Conflicts: " >> "$merge_log_file";
-    echo "$conflicts" >> "$merge_log_file";
+    echo "Error. Conflicts: ";
+    echo "$conflicts";
     echo "Completed with errors. Branch conflict.";
 
     exit 1;
   fi
 
   if [ -n "$difference" ]; then
-    echo "Error. There is a difference: " >> "$merge_log_file";
-    echo "$difference" >> "$merge_log_file";
+    echo "Error. There is a difference: ";
+    echo "$difference";
     echo "Completed with errors. There are differences in branches.";
 
     exit 1;
   fi
-  {
-    echo "======="
-    echo "Merge ${branch} branch to ${current} was successful"
-  } >> "$merge_log_file"
 
-  echo "Done!"
+  echo "=======";
+  echo "Merge ${branch} branch to ${current} was successful";
+
+  git -q push;
+  echo "Pushed to remote";
+
+  echo "Done!";
   exit 0;
 )
 catch || {
-  {
-    echo "Return with code: ${ex_code}. Reset ${current} branch."
-    git reset --hard;
-    git branch -D "$branch"
-  } >> "$merge_log_file"
+  echo "Return with code: ${ex_code}. Reset ${current} branch.";
+  git reset --hard;
+  git branch -D "$branch";
 
   echo "Abort!"
 }
