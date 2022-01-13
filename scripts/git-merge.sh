@@ -43,21 +43,14 @@ try
   if [ -n "$status" ]; then
     echo "Error. There are no saved files: ";
     echo "$status";
-    echo $status;
 
     exit 0;
   fi
 
-  echo "Current branch $current with hash $( git rev-parse --short HEAD )";
-
-  # Release branch is exists
-  if [ -n "$( git show-ref refs/heads/"$branch")" ]; then
-    # Remove old local release branch
-    git branch -D "$branch";
-  fi
+  echo "Текущая ветка $current имеет хэш $( git rev-parse --short HEAD )";
 
   # Try merge current branch with remote
-  git fetch "$repo"/"$branch" -q && git merge "$branch" "$repo"/"$branch" -q;
+  git fetch "$repo" "$branch" -q && git merge "$branch" "$repo"/"$branch" -q;
 
   # Difference current branch with remote release and save to log file
   git -C "${rootpath}" diff -b -w --compact-summary "${current}" "${repo}"/"${branch}" -- . ':!.gitdiffignore' "${ignores}" > "$diff_log_file";
@@ -94,7 +87,6 @@ try
 catch || {
   echo "Return with code: ${ex_code}. Reset ${current} branch.";
   git reset --hard;
-  git branch -D "$branch";
 
   echo "Abort!"
 }
