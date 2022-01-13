@@ -50,7 +50,7 @@ try
   echo "Текущая ветка $current имеет хэш $( git rev-parse --short HEAD )";
 
   # Try merge current branch with remote
-  git fetch "$repo" "$branch" -q && git merge "$branch" "$repo"/"$branch" -q;
+  git fetch "$repo" "$branch" -q && git merge "$repo"/"$branch" -q;
 
   # Difference current branch with remote release and save to log file
   git -C "${rootpath}" diff -b -w --compact-summary "${current}" "${repo}"/"${branch}" -- . ':!.gitdiffignore' "${ignores}" > "$diff_log_file";
