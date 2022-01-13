@@ -76,7 +76,7 @@ try
   echo "=======";
   echo "Слияние ветки ${branch} с ${current} прошло успешно";
 
-  git -q push;
+  git push;
 
   echo "Done!";
   exit 0;
