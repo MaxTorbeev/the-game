@@ -83,6 +83,6 @@ try
   exit 0;
 )
 catch || {
-  echo "Возврат в исходное состояние ветки ${current}.";
+  echo "Возврат в исходное состояние ветки ${current}";
   git reset --hard;
 }
