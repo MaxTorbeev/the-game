@@ -77,7 +77,6 @@ try
   echo "Слияние ветки ${branch} с ${current} прошло успешно";
 
   git -q push;
-  echo "Pushed to remote";
 
   echo "Done!";
   exit 0;
