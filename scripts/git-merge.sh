@@ -10,10 +10,6 @@ rootpath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; cd "../" >/dev/null 2>&1 ; p
 # Set exit on any error
 set -e
 
-# Clear log files
-> "$merge_log_file";
-> "$diff_log_file";
-
 # get parameters
 while getopts b:r:f flag
 do
@@ -34,6 +30,10 @@ echo "Слияние ветки ${branch}... "
 
 try
 (
+  # Clear log files
+  > "$merge_log_file";
+  > "$diff_log_file";
+
   # Check git status
   status="$( git -C "$rootpath" status -uno --porcelain )";
 
