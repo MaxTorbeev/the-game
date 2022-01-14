@@ -44,9 +44,6 @@ try
     exit 0;
   fi
 
-  # Save branch differences to log file
-  git -C "${rootpath}" diff -b -w --name-only "${current}" "${repo}"/"${branch}" > "$diff_log_file"
-
   # Check git status
   status="$( git -C "$rootpath" status -uno --porcelain )";
 
@@ -56,6 +53,9 @@ try
 
     exit 0;
   fi
+
+  # Save branch differences to log file
+  git -C "${rootpath}" diff -b -w --name-only "${current}" "${repo}"/"${branch}" > "$diff_log_file"
 
   echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD )";
 
