@@ -34,16 +34,6 @@ echo "Слияние ветки ${branch}... "
 
 try
 (
-  if [ -n "$( git -C "${rootpath}" diff -b -w --name-only "${current}" "${current_remote}" | cat )" ]; then
-    echo "Ошибка. Ветки ${current} не совпадает с удаленным репозиторием";
-    exit 0;
-  fi
-
-  if [ -z "$( git ls-remote --exit-code --heads ${repo} ${branch} )" ]; then
-    echo "Ошибка. Ветки ${branch} не существует в ${repo}";
-    exit 0;
-  fi
-
   # Check git status
   status="$( git -C "$rootpath" status -uno --porcelain )";
 
@@ -54,48 +44,60 @@ try
     exit 0;
   fi
 
+  if [ -z "$( git ls-remote --exit-code --heads ${repo} ${branch} )" ]; then
+    echo "Ошибка. Ветки ${branch} не существует в ${repo}";
+    exit 0;
+  fi
+
+  if [ -n "$( git -C "${rootpath}" diff -b -w --name-only "${current}" "${current_remote}" | cat )" ]; then
+    echo "Ошибка. Ветки ${current} не совпадает с удаленным репозиторием";
+    exit 0;
+  fi
+
+  # Try merge current branch with remote
+  git fetch "$repo" "$branch" -q
+
   # Save branch differences to log file
   git -C "${rootpath}" diff -b -w --name-only "${current}" "${repo}"/"${branch}" > "$diff_log_file"
 
   echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD )";
 
-  # Try merge current branch with remote
-  git fetch "$repo" "$branch" -q
-
   if [ "$force" ]; then
     git merge "$repo"/"$branch" -Xtheir -q;
   else
     git merge "$repo"/"$branch" -q;
-  fi
 
-  # Difference current branch with remote release and save to log file
-  difference=$( git -C ${rootpath} diff -b -w --stat ${current} ${repo}/${branch} -- . ${ignores} | cat );
+    # Difference current branch with remote release and save to log file
+    difference=$( git -C ${rootpath} diff -b -w --stat ${current} ${repo}/${branch} -- . ${ignores} | cat );
 
-  # Check conflicts
-  conflicts=$( git diff --name-only --diff-filter=U );
+    # Check conflicts
+    conflicts=$( git diff --name-only --diff-filter=U );
 
-  # Check for conflicts
-  if [ -n "$conflicts" ]; then
-    echo "Ошибка. Имеются конфликты: ";
-    echo "$conflicts";
+    # Check for conflicts
+    if [ -n "$conflicts" ]; then
+      echo "Ошибка. Имеются конфликты: ";
+      echo "$conflicts";
 
-    exit 1;
-  fi
+      exit 1;
+    fi
 
-  if [ -n "$difference" ]; then
-    echo "Ошибка. После слияния имеется разница с удаленным репозиторием: ";
-    echo "$difference";
+    if [ -n "$difference" ]; then
+      echo "Ошибка. После слияния имеется разница с удаленным репозиторием: ";
+      echo "$difference";
 
-    exit 1;
+      exit 1;
+    fi
   fi
 
   echo "Слияние ветки ${branch} с ${current} прошло успешно";
 
-  git push;
+  git push "${current_remote}" >/dev/null 2>&1;
+
+  echo "Пушим туда то...";
 
   exit 0;
 )
 catch || {
   echo "Возврат в исходное состояние ветки ${current}";
-  git reset --hard;
+  git reset --hard >/dev/null 2>&1;
 }
