@@ -63,8 +63,7 @@ try
   git fetch "$repo" "$branch" -q
 
   if [ "$force" ]; then
-    echo git merge "$repo"/"$branch" -Xtheir -q;
-#    git merge "$repo"/"$branch" -Xtheir -q;
+    git merge "$repo"/"$branch" -Xtheir -q;
   else
     git merge "$repo"/"$branch" -q;
   fi
