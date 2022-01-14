@@ -22,17 +22,28 @@ do
     shift
 done
 
-# Current branch
-current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
-current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} );
-
-echo "Слияние ветки ${branch}... "
-
 try
 (
+  # Current branch
+  current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
+  current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} );
+
+  echo "Слияние ветки ${branch}... "
+
   # Clear log files
-  > "$merge_log_file";
-  > "$diff_log_file";
+  if [ -w "$diff_log_file" ] ; then
+    > "$diff_log_file";
+  else
+    echo "Нет прав доступа к файлу ${diff_log_file}"
+    exit 0;
+  fi
+
+  if [ -w "$merge_log_file" ] ; then
+    > "$merge_log_file";
+  else
+    echo "Нет прав доступа к файлу ${merge_log_file}"
+    exit 0;
+  fi
 
   # Check git status
   status="$( git -C "$rootpath" status -uno --porcelain )";
