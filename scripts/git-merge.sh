@@ -22,12 +22,12 @@ do
     shift
 done
 
+# Current branch
+current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
+current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} );
+
 try
 (
-  # Current branch
-  current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
-  current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} );
-
   # Clear log files
   if [ -w "$diff_log_file" ] ; then
     > "$diff_log_file";
@@ -116,4 +116,5 @@ try
 catch || {
   echo "Возврат в исходное состояние ветки ${current}";
   git reset --hard >/dev/null 2>&1;
+  echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD ) ($( git show-branch --no-name HEAD ))";
 }
