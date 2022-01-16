@@ -55,23 +55,23 @@ try
     exit 0;
   fi
 
-  if [ -z "$( git ls-remote --exit-code --heads ${repo} ${branch} || exit 1 )" ]; then
-    echo "Ошибка. Ветки ${branch} не существует в ${repo}";
-    exit 0;
-  fi
-
-  if [ -z "${current_remote}" ]; then
-      echo "Ошибка. Ветка ${current} не имеет связи с удаленным репозиторием"
-      exit 0;
-  fi
-
-  if [ "$( git rev-parse "$current_remote" )" != "$( git rev-parse HEAD )" ]; then
-    echo "Ошибка. Ветки ${current} не совпадает с удаленной веткой ${current_remote}";
-    exit 0;
-  fi
+#  if [ -z "$( git ls-remote --exit-code --heads ${repo} ${branch} )" ]; then
+#    echo "Ошибка. Ветки ${branch} не существует в ${repo}";
+#    exit 0;
+#  fi
+#
+#  if [ -z "${current_remote}" ]; then
+#      echo "Ошибка. Ветка ${current} не имеет связи с удаленным репозиторием"
+#      exit 0;
+#  fi
+#
+#  if [ "$( git rev-parse "$current_remote" )" != "$( git rev-parse HEAD )" ]; then
+#    echo "Ошибка. Ветки ${current} не совпадает с удаленной веткой ${current_remote}";
+#    exit 0;
+#  fi
 
   # Try merge current branch with remote
-  git fetch "$repo" "$branch" -q
+  git fetch "$repo" "$branch" -q || exit 1
 
   # Save branch differences to log file
   git -C "${rootpath}" diff -b -w --name-only "${current}" "${repo}"/"${branch}" > "$diff_log_file"
