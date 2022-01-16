@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Текущая ветка будет резетнута до состояния удаленной ветки
-force=false;
-
 # path to root repository folder
 rootpath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; cd "../" >/dev/null 2>&1 ; pwd -P )"
 
@@ -79,7 +76,7 @@ try
   echo "Слияние ветки ${branch}... "
 
   if [ "$force" ]; then
-    git merge "$repo"/"$branch" -Xtheir -q || exit 1;
+    git merge "$repo"/"$branch" -X their -q || exit 1;
   else
     git merge "$repo"/"$branch" -q || exit 1;
 
