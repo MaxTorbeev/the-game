@@ -28,8 +28,6 @@ try
   current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
   current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} );
 
-  echo "Слияние ветки ${branch}... "
-
   # Clear log files
   if [ -w "$diff_log_file" ] ; then
     > "$diff_log_file";
@@ -77,6 +75,8 @@ try
   git -C "${rootpath}" diff -b -w --name-only "${current}" "${repo}"/"${branch}" > "$diff_log_file"
 
   echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD ) ($( git show-branch --no-name HEAD ))";
+
+  echo "Слияние ветки ${branch}... "
 
   if [ "$force" ]; then
     git merge "$repo"/"$branch" -Xtheir -q || exit 1;
