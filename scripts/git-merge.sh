@@ -76,7 +76,7 @@ try
   # Save branch differences to log file
   git -C "${rootpath}" diff -b -w --name-only "${current}" "${repo}"/"${branch}" > "$diff_log_file"
 
-  echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD )";
+  echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD ) ($( git show-branch --no-name HEAD )";
 
   if [ "$force" ]; then
     git merge "$repo"/"$branch" -Xtheir -q || exit 1;
