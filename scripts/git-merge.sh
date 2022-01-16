@@ -79,9 +79,9 @@ try
   echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD )";
 
   if [ "$force" ]; then
-    git merge "$repo"/"$branch" -Xtheir -q;
+    git merge "$repo"/"$branch" -Xtheir -q || exit 1;
   else
-    git merge "$repo"/"$branch" -q;
+    git merge "$repo"/"$branch" -q || exit 1;
 
     # Difference current branch with remote release and save to log file
     difference=$( git -C ${rootpath} diff -b -w --stat ${current} ${repo}/${branch} -- . ${ignores} | cat );
