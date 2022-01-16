@@ -34,14 +34,14 @@ try
   if [ -w "$diff_log_file" ] ; then
     > "$diff_log_file";
   else
-    echo "Нет прав доступа к файлу ${diff_log_file}"
+    echo "Ошибка. Нет прав доступа к файлу ${diff_log_file}"
     exit 0;
   fi
 
   if [ -w "$merge_log_file" ] ; then
     > "$merge_log_file";
   else
-    echo "Нет прав доступа к файлу ${merge_log_file}"
+    echo "Ошибка. Нет прав доступа к файлу ${merge_log_file}"
     exit 0;
   fi
 
@@ -60,7 +60,7 @@ try
     exit 0;
   fi
 
-  if [ -n "$( git -C "${rootpath}" diff -b -w --name-only "${current}" "${current_remote}" | cat )" ]; then
+  if [ "$( git rev-parse "$current_remote" )" != "$( git rev-parse HEAD )" ]; then
     echo "Ошибка. Ветки ${current} не совпадает с удаленной веткой ${current_remote}";
     exit 0;
   fi
