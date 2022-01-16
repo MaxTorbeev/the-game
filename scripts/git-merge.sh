@@ -60,6 +60,11 @@ try
     exit 0;
   fi
 
+  if [ -z "${current_remote}" ]; then
+      echo "Ошибка. Ветка ${current} не имеет связи с удаленным репозиторием"
+      exit 0;
+  fi
+
   if [ "$( git rev-parse "$current_remote" )" != "$( git rev-parse HEAD )" ]; then
     echo "Ошибка. Ветки ${current} не совпадает с удаленной веткой ${current_remote}";
     exit 0;
