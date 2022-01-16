@@ -76,7 +76,7 @@ try
   echo "Слияние ветки ${branch}... "
 
   if [ "$force" ]; then
-    git merge -X theirs  "$repo"/"$branch" -q || exit 1;
+    git merge -X theirs  "$repo"/"$branch" -q;
   else
     git merge "$repo"/"$branch" -q  >/dev/null 2>&1 || exit 1;
 
