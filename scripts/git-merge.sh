@@ -78,7 +78,7 @@ try
   if [ "$force" ]; then
     git merge "$repo"/"$branch" -X their -q || exit 1;
   else
-    git merge "$repo"/"$branch" -q || exit 1;
+    git merge "$repo"/"$branch" -q  >/dev/null 2>&1 || exit 1;
 
     # Difference current branch with remote release and save to log file
     difference=$( git -C ${rootpath} diff -b -w --stat ${current} ${repo}/${branch} -- . ${ignores} | cat );
@@ -100,12 +100,13 @@ try
   exit 0;
 )
 catch || {
+  echo "Завершено с ошибкой."
   # Check conflicts
   conflicts=$( git diff --name-only --diff-filter=U );
 
   # Check for conflicts
   if [ -n "$conflicts" ]; then
-    echo "Ошибка. Имеются конфликты: ";
+    echo "Имеются конфликты: ";
     echo "$conflicts";
   fi
 
