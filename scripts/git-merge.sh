@@ -111,7 +111,7 @@ try
   exit 0;
 )
 catch || {
-  echo "Возврат в исходное состояние ветки ${current}";
+  echo "Возврат в исходное состояние ветки ${current}...";
   git reset --hard >/dev/null 2>&1;
   echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD ) ($( git show-branch --no-name HEAD ))";
 }
