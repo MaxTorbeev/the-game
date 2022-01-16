@@ -78,21 +78,10 @@ try
   if [ "$force" ]; then
     git merge "$repo"/"$branch" -X their -q || exit 1;
   else
-    git merge "$repo"/"$branch" -q;
+    git merge "$repo"/"$branch" -q || exit 1;
 
     # Difference current branch with remote release and save to log file
     difference=$( git -C ${rootpath} diff -b -w --stat ${current} ${repo}/${branch} -- . ${ignores} | cat );
-
-    # Check conflicts
-    conflicts=$( git diff --name-only --diff-filter=U );
-
-    # Check for conflicts
-    if [ -n "$conflicts" ]; then
-      echo "Ошибка. Имеются конфликты: ";
-      echo "$conflicts";
-
-      exit 1;
-    fi
 
     if [ -n "$difference" ]; then
       echo "Ошибка. После слияния имеется разница с удаленным репозиторием: ";
@@ -111,6 +100,15 @@ try
   exit 0;
 )
 catch || {
+  # Check conflicts
+  conflicts=$( git diff --name-only --diff-filter=U );
+
+  # Check for conflicts
+  if [ -n "$conflicts" ]; then
+    echo "Ошибка. Имеются конфликты: ";
+    echo "$conflicts";
+  fi
+
   echo "Возврат в исходное состояние ветки ${current}...";
   git reset --hard >/dev/null 2>&1;
   echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD ) ($( git show-branch --no-name HEAD ))";
