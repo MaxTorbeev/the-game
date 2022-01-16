@@ -95,7 +95,7 @@ try
 
   echo "Пуш ветки ${current}...";
 
-  git push "${current_remote}" >> "$merge_log_file" || exit 1;
+  git push "${current}" >> "$merge_log_file" || exit 1;
 
   echo "Завершено успешно";
 
