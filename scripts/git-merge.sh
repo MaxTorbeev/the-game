@@ -78,7 +78,7 @@ try
   if [ "$force" ]; then
     git merge "$repo"/"$branch" -X their -q || exit 1;
   else
-    git merge "$repo"/"$branch" -q  >/dev/null 2>&1 || exit 1;
+    git merge "$repo"/"$branch" -q;
 
     # Difference current branch with remote release and save to log file
     difference=$( git -C ${rootpath} diff -b -w --stat ${current} ${repo}/${branch} -- . ${ignores} | cat );
