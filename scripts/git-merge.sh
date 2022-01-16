@@ -95,7 +95,7 @@ try
 
   echo "Пуш ветки ${current}...";
 
-  git push "${current_remote}" >/dev/null 2>&1 || exit 1;
+  git push "${current_remote}" || exit 1;
 
   echo "Завершено успешно";
 
