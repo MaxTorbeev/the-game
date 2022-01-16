@@ -61,7 +61,7 @@ try
   fi
 
   if [ -n "$( git -C "${rootpath}" diff -b -w --name-only "${current}" "${current_remote}" | cat )" ]; then
-    echo "Ошибка. Ветки ${current} не совпадает с удаленным репозиторием";
+    echo "Ошибка. Ветки ${current} не совпадает с удаленным репозиторием ${current_remote}";
     exit 0;
   fi
 
