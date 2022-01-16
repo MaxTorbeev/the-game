@@ -76,9 +76,9 @@ try
   echo "Слияние ветки ${branch}... "
 
   if [ "$force" ]; then
-    git merge -X theirs  "$repo"/"$branch" -q;
+    git merge -X theirs  "$repo"/"$branch" -q >> "$merge_log_file" || exit 1;
   else
-    git merge "$repo"/"$branch" -q  >/dev/null 2>&1 || exit 1;
+    git merge "$repo"/"$branch" -q  >> "$merge_log_file" || exit 1;
 
     # Difference current branch with remote release and save to log file
     difference=$( git -C ${rootpath} diff -b -w --stat ${current} ${repo}/${branch} -- . ${ignores} | cat );
@@ -95,7 +95,7 @@ try
 
   echo "Пуш ветки ${current}...";
 
-  git push "${current_remote}" || exit 1;
+  git push "${current_remote}" >> "$merge_log_file" || exit 1;
 
   echo "Завершено успешно";
 
