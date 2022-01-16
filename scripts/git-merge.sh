@@ -55,7 +55,7 @@ try
     exit 0;
   fi
 
-  if [ -z "$( git ls-remote --exit-code --heads ${repo} ${branch} )" ]; then
+  if [ -z "$( git ls-remote --exit-code --heads ${repo} ${branch} || exit 1 )" ]; then
     echo "Ошибка. Ветки ${branch} не существует в ${repo}";
     exit 0;
   fi
