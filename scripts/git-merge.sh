@@ -26,14 +26,14 @@ current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} );
 try
 (
   # Clear log files
-  if [ -w "$diff_log_file" ] ; then
+  if [ -w "$diff_log_file" ]; then
     > "$diff_log_file";
   else
     echo "Ошибка. Нет прав доступа к файлу ${diff_log_file}"
     exit 0;
   fi
 
-  if [ -w "$merge_log_file" ] ; then
+  if [ -w "$merge_log_file" ]; then
     > "$merge_log_file";
   else
     echo "Ошибка. Нет прав доступа к файлу ${merge_log_file}"
@@ -93,14 +93,17 @@ try
 
   echo "Слияние ветки ${branch} с ${current} прошло успешно";
 
-  git push "${current_remote}" >/dev/null 2>&1;
+  echo "Пуш ветки ${current}...";
 
-  echo "Пушим туда то...";
+  git push "${current_remote}" >/dev/null 2>&1 || exit 1;
+
+  echo "Завершено успешно";
 
   exit 0;
 )
 catch || {
-  echo "Завершено с ошибкой."
+  echo "Завершено с ошибкой"
+
   # Check conflicts
   conflicts=$( git diff --name-only --diff-filter=U );
 
