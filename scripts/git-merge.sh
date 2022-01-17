@@ -99,7 +99,7 @@ try
 
   echo "Слияние ветки ${branch} с ${current} прошло успешно";
 
-  echo "Пуш ветки ${current}...";
+  echo "Пуш в ветку ${current}...";
 
   git push -q >> "$merge_log_file" || exit 1;
 
