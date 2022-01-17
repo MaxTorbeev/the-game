@@ -21,11 +21,10 @@ done
 
 # Current branch
 current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
-current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} >/dev/null 2>&1 );
+current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} || echo "Ошибка. Ветки ${current} нет в удаленном репозитории");
 
 try
 (
-
   # Clear log files
   if [ -w "$diff_log_file" ]; then
     > "$diff_log_file";
