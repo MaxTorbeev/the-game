@@ -61,8 +61,10 @@ try
     exit 0;
   fi
 
-  # Try merge current branch with remote
-  git fetch "$repo" "$branch" -q || exit 1
+  git fetch "$repo" "$branch" -q >> "$merge_log_file" || {
+    echo "Ошибка. Не удалось получить изменения с удаленного репозитория "
+    exit 0;
+  }
 
   # Save branch differences to log file
   git -C "${rootpath}" diff -b -w --name-only "${current}" "${repo}"/"${branch}" > "$diff_log_file"
@@ -74,7 +76,7 @@ try
   if [ "$force" ]; then
     git merge -X theirs  "$repo"/"$branch" -q >> "$merge_log_file";
   else
-    git merge "$repo"/"$branch" -q  >> "$merge_log_file";
+    git merge "$repo"/"$branch" -q >> "$merge_log_file";
 
     # Difference current branch with remote release and save to log file
     difference=$( git -C ${rootpath} diff -b -w --stat ${current} ${repo}/${branch} -- . ${ignores} | cat );
