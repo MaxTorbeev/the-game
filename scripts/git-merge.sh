@@ -23,6 +23,8 @@ done
 current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
 current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} );
 
+exit 0;
+
 try
 (
   # Clear log files
