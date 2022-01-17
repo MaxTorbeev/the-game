@@ -71,9 +71,9 @@ try
   echo "Слияние ветки ${branch}... "
 
   if [ "$force" ]; then
-    git merge -X theirs  "$repo"/"$branch" -q >> "$merge_log_file" || exit 1;
+    git merge -X theirs  "$repo"/"$branch" -q >> "$merge_log_file";
   else
-    git merge "$repo"/"$branch" -q  >> "$merge_log_file" || exit 1;
+    git merge "$repo"/"$branch" -q  >> "$merge_log_file";
 
     # Difference current branch with remote release and save to log file
     difference=$( git -C ${rootpath} diff -b -w --stat ${current} ${repo}/${branch} -- . ${ignores} | cat );
@@ -81,6 +81,17 @@ try
     if [ -n "$difference" ]; then
       echo "Ошибка. После слияния имеется разница с удаленным репозиторием: ";
       echo "$difference";
+
+      exit 1;
+    fi
+
+   # Check conflicts
+    conflicts=$( git diff --name-only --diff-filter=U );
+
+    # Check for conflicts
+    if [ -n "$conflicts" ]; then
+      echo "Имеются конфликты: ";
+      echo "$conflicts";
 
       exit 1;
     fi
@@ -98,16 +109,6 @@ try
 )
 catch || {
   echo "Завершено с ошибкой"
-
-  # Check conflicts
-  conflicts=$( git diff --name-only --diff-filter=U );
-
-  # Check for conflicts
-  if [ -n "$conflicts" ]; then
-    echo "Имеются конфликты: ";
-    echo "$conflicts";
-  fi
-
   echo "Возврат в исходное состояние ветки ${current}...";
   git reset --hard >/dev/null 2>&1;
   echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD ) ($( git show-branch --no-name HEAD ))";
