@@ -61,10 +61,8 @@ try
     exit 0;
   fi
 
-  git fetch "$repo" "$branch" -q >> "$merge_log_file" || {
-    echo "Ошибка. Не удалось получить изменения с удаленного репозитория "
-    exit 0;
-  }
+  echo "Получение ветки ${branch} из удаленного репозитория"
+  git fetch "$repo" "$branch" -q >> "$merge_log_file" || exit 1;
 
   # Save branch differences to log file
   git -C "${rootpath}" diff -b -w --name-only "${current}" "${repo}"/"${branch}" > "$diff_log_file"
