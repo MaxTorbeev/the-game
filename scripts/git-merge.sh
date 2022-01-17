@@ -61,7 +61,7 @@ try
     exit 0;
   fi
 
-  echo "Получение ветки ${branch} из удаленного репозитория"
+  echo "Получение ветки ${branch} из удаленного репозитория (${repo})"
   git fetch "$repo" "$branch" -q >> "$merge_log_file" || exit 1;
 
   # Save branch differences to log file
