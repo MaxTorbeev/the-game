@@ -21,7 +21,7 @@ done
 
 # Current branch
 current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
-current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} || echo "Ошибка. Ветки ${current} нет в удаленном репозитории");
+current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u}  2>/dev/null );
 
 try
 (
@@ -50,11 +50,6 @@ try
     exit 0;
   fi
 
-  if [ -z "$( git ls-remote --exit-code --heads ${repo} ${branch} )" ]; then
-    echo "Ошибка. Ветки ${branch} не существует в ${repo}";
-    exit 0;
-  fi
-
   if [ -z "${current_remote}" ]; then
       echo "Ошибка. Ветка ${current} не имеет связи с удаленным репозиторием"
       exit 0;
@@ -76,9 +71,9 @@ try
   echo "Слияние ветки ${branch}... "
 
   if [ "$force" ]; then
-    git merge -X theirs  "$repo"/"$branch" -q >> "$merge_log_file" || exit 1;
+    git merge -X theirs  "$repo"/"$branch" -q >> "$merge_log_file";
   else
-    git merge "$repo"/"$branch" -q  >> "$merge_log_file" || exit 1;
+    git merge "$repo"/"$branch" -q  >> "$merge_log_file";
 
     # Difference current branch with remote release and save to log file
     difference=$( git -C ${rootpath} diff -b -w --stat ${current} ${repo}/${branch} -- . ${ignores} | cat );
@@ -89,11 +84,22 @@ try
 
       exit 1;
     fi
+
+   # Check conflicts
+    conflicts=$( git diff --name-only --diff-filter=U );
+
+    # Check for conflicts
+    if [ -n "$conflicts" ]; then
+      echo "Имеются конфликты: ";
+      echo "$conflicts";
+
+      exit 1;
+    fi
   fi
 
   echo "Слияние ветки ${branch} с ${current} прошло успешно";
 
-  echo "Пуш ветки ${current}...";
+  echo "Пуш в ветку ${current}...";
 
   git push -q >> "$merge_log_file" || exit 1;
 
@@ -103,16 +109,6 @@ try
 )
 catch || {
   echo "Завершено с ошибкой"
-
-  # Check conflicts
-  conflicts=$( git diff --name-only --diff-filter=U );
-
-  # Check for conflicts
-  if [ -n "$conflicts" ]; then
-    echo "Имеются конфликты: ";
-    echo "$conflicts";
-  fi
-
   echo "Возврат в исходное состояние ветки ${current}...";
   git reset --hard >/dev/null 2>&1;
   echo "Текущая ветка $current с последней фиксацией $( git rev-parse --short HEAD ) ($( git show-branch --no-name HEAD ))";
