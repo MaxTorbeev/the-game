@@ -21,10 +21,11 @@ done
 
 # Current branch
 current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
-current_remote=$( git rev-parse -q --abbrev-ref --symbolic-full-name @{u} >> "$merge_log_file" );
 
 try
 (
+  current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} );
+
   # Clear log files
   if [ -w "$diff_log_file" ]; then
     > "$diff_log_file";
