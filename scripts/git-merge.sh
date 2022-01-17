@@ -21,7 +21,7 @@ done
 
 # Current branch
 current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
-current_remote=$( git -q rev-parse --abbrev-ref --symbolic-full-name @{u} );
+current_remote=$( git rev-parse -q --abbrev-ref --symbolic-full-name @{u} );
 
 try
 (
