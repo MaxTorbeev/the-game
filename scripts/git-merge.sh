@@ -19,9 +19,11 @@ do
     shift
 done
 
+exit 0;
+
 # Current branch
 current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
-current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} || exit 0);
+current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u});
 
 try
 (
