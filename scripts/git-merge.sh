@@ -24,7 +24,7 @@ current=$( git symbolic-ref --quiet --short HEAD || git rev-parse HEAD );
 
 try
 (
-  current_remote=$( git rev-parse --abbrev-ref --symbolic-full-name @{u} >/dev/null);
+  current_remote=$( $(git rev-parse --abbrev-ref --symbolic-full-name @{u}) >/dev/null 2>&1);
 
   # Clear log files
   if [ -w "$diff_log_file" ]; then
