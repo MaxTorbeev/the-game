@@ -7,6 +7,7 @@ const app = express();
 // initialize configuration
 dotenv.config();
 
+// port
 const port = process.env.SERVER_PORT;
 
 // Configure Express to use EJS some comment
@@ -19,7 +20,16 @@ app.get( "/", ( req, res ) => {
     res.render( "index" );
 } );
 
+// define a route handler for the default home page
+app.get( "/about", ( req, res ) => {
+    res.render( "about" ); // render the index template
+} );
+
+
+// Add new comment bla bla 100
 app.listen( port, () => {
     // tslint:disable-next-line:no-console
     console.log( `server started at http://localhost:${ port }` );
 } );
+
+// endline comment

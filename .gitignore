@@ -1,6 +1,8 @@
 .env
+.DS_Store
 /dist
 /node_modules
 .idea/
 /scripts/.diff.log
 /scripts/.git-pull.log
+/scripts/.git-merge.log
